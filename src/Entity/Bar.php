@@ -162,7 +162,10 @@ class Bar
         return $this->visitors;
     }
 
-    public function setVisitors(?array $visitors): void
+    /**
+     * @param array $visitors
+     */
+    public function setVisitors(array $visitors): void
     {
         $this->visitors = $visitors;
     }

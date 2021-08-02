@@ -35,8 +35,9 @@ class BarRepository extends ServiceEntityRepository
         $bar->setAmountOfBartenders(1);
         $bar->setAmountOfVisitors(0);
         $bar->setRepertoire($body['repertoire']);
-        $bar->setVisitors(null);
+        $bar->setVisitors(array());
         $bar->setStatus('open');
+        $bar->setCurrentGenre("");
 
         $this->save($bar);
 
@@ -72,22 +73,6 @@ class BarRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-    /**
-     * @return Bar[]
-     */
-    public function getBarsArray(): array
-    {
-        $bars = $this->findAll();
-
-        if (!$bars) {
-            throw new RuntimeException(
-                'Cannot find any bar',
-                ErrorCodeEnum::NOT_FOUND
-            );
-        }
-
-        return $bars;
-    }
 
     public function returnBarByTitle(string $title): Bar
     {
@@ -469,6 +454,23 @@ class BarRepository extends ServiceEntityRepository
         return $this->update($bar, $body);
     }
 
+    public function updateByTitle(string $title, array $body): Bar
+    {
+        $bar = $this->findOneBy(['title' => $title]);
+
+        if (!$bar) {
+            throw new RuntimeException(
+                sprintf(
+                    'Cannot find bar with title `%s`',
+                    $title
+                ),
+                ErrorCodeEnum::NOT_FOUND
+            );
+        }
+
+        return $this->update($bar, $body);
+    }
+
     private function update(Bar $bar, array $body): Bar
     {
         foreach ($body as $key => $value) {
@@ -531,6 +533,24 @@ class BarRepository extends ServiceEntityRepository
     {
         $this->_em->remove($bar);
         $this->_em->flush();
+    }
+
+    public function returnBarByID(int $id): Bar
+    {
+        $bar = $this->find($id);
+
+        if(!$bar)
+        {
+            throw new RuntimeException(
+                sprintf(
+                    'Can`t find the bar with id `%d`',
+                    $id
+                ),
+                ErrorCodeEnum::NOT_FOUND
+            );
+        }
+
+        return $bar;
     }
 
 }

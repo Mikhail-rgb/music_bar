@@ -55,19 +55,7 @@ class MusicBarController extends AbstractController
     }
 
     /**
-     * @Route("/music/bars", name="show_all_bars", methods={"GET"})
-     */
-    public function getAllBars(): Response
-    {
-        $bars = $this->barRepository->getBarsArray();
-
-        $barsJson = $this->serializer->serialize($bars, 'json');
-
-        return new JsonResponse(json_decode($barsJson, true));
-    }
-
-    /**
-     * @Route("/music/bar/{title}", name="find_bar_by_title", methods={"GET"})
+     * @Route("/music/bar/title/{title}", name="find_bar_by_title", methods={"GET"})
      */
     public function getBarByName(string $title): Response
     {
@@ -79,13 +67,39 @@ class MusicBarController extends AbstractController
     }
 
     /**
-     * @Route("/music/bar/{id}", name="update_bar_by_id", methods={"PUT"})
+     * @Route("/music/bar/id/{id}", name="find_bar_by_id", methods={"GET"})
+     */
+    public function getBarByID(int $id): Response
+    {
+        $bar = $this->barRepository->returnBarByID($id);
+
+        $barJson = $this->serializer->serialize($bar, 'json');
+
+        return new JsonResponse(json_decode($barJson, true));
+    }
+
+    /**
+     * @Route("/music/bar/id/{id}", name="update_bar_by_id", methods={"PUT"})
      */
     public function updateBarByID(Request $request, int $id): Response
     {
         $body = json_decode((string)$request->getContent(), true);
 
         $updatedBar = $this->barRepository->updateByID($id, $body);
+
+        $barJson = $this->serializer->serialize($updatedBar, 'json');
+
+        return new JsonResponse(json_decode($barJson, true));
+    }
+
+    /**
+     * @Route("/music/bar/title/{title}", name="update_bar_by_title", methods={"PUT"})
+     */
+    public function updateBarByTitle(Request $request, string $title): Response
+    {
+        $body = json_decode((string)$request->getContent(), true);
+
+        $updatedBar = $this->barRepository->updateByTitle($title, $body);
 
         $barJson = $this->serializer->serialize($updatedBar, 'json');
 
