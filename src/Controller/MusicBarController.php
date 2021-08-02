@@ -23,7 +23,6 @@ class MusicBarController extends AbstractController
     private BarRepository $barRepository;
     private VisitorRepository $visitorRepository;
     private SerializerInterface $serializer;
-    private GeneralValidator $generalValidator;
     private VisitorValidator $visitorValidator;
     private BarValidator $barValidator;
 
@@ -31,7 +30,6 @@ class MusicBarController extends AbstractController
         BarRepository $barRepository,
         VisitorRepository $visitorRepository,
         SerializerInterface $serializer,
-        GeneralValidator $generalValidator,
         VisitorValidator $visitorValidator,
         BarValidator $barValidator
     )
@@ -39,7 +37,6 @@ class MusicBarController extends AbstractController
         $this->barRepository = $barRepository;
         $this->visitorRepository = $visitorRepository;
         $this->serializer = $serializer;
-        $this->generalValidator = $generalValidator;
         $this->visitorValidator = $visitorValidator;
         $this->barValidator = $barValidator;
     }
@@ -50,7 +47,7 @@ class MusicBarController extends AbstractController
     public function openMusicBar(Request $request): Response
     {
         $body = json_decode((string)$request->getContent(), true);
-
+        $this->barValidator->checkBeforeCreation($body);
         if ($this->barRepository->barExists($body)) {
             $existedBar = $this->barRepository->returnBarByTitle($body['title']);
             $bar = $this->barRepository->openBar($existedBar);
@@ -172,19 +169,11 @@ class MusicBarController extends AbstractController
 
         $body = json_decode((string)$request->getContent(), true);
 
-        if(!isset($body['visitors']))
-        {
-            throw new RuntimeException(
-                'Incorrect format of request. Should be array `visitors`',
-                ErrorCodeEnum::INCORRECT_REQUEST
-            );
-        }
+        $this->visitorValidator->checkBeforeCreation($body);
 
         $visitors = $body['visitors'];
         $visitorsId = [];
-        foreach ($visitors as $visitor)
-        {
-            //$this->visitorValidator->checkBeforeCreation($visitor);
+        foreach ($visitors as $visitor) {
             $newVisitor = $this->visitorRepository->create($visitor);
             $visitorsId[] = $newVisitor->getId();
             $this->barRepository->faceControl($bar, $newVisitor, $this->visitorRepository);

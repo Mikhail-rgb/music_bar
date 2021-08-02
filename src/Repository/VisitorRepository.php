@@ -105,8 +105,7 @@ class VisitorRepository extends ServiceEntityRepository
     {
         $visitors = $this->findAll();
 
-        if(!$visitors)
-        {
+        if (!$visitors) {
             throw new RuntimeException(
                 'can`t find any visitor',
                 ErrorCodeEnum::NOT_FOUND
@@ -135,8 +134,7 @@ class VisitorRepository extends ServiceEntityRepository
     {
         $newVisitor = $this->find($visitor->getId());
 
-        if(!$newVisitor)
-        {
+        if (!$newVisitor) {
             throw new RuntimeException(
                 sprintf(
                     'Can`t find visitor with id `%d` in database',

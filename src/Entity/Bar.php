@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\ErrorCodeEnum;
 use App\Repository\BarRepository;
 use Doctrine\ORM\Mapping as ORM;
-use RuntimeException;
 
 /**
  * @ORM\Entity(repositoryClass=BarRepository::class)
@@ -51,7 +49,7 @@ class Bar
     private string $status;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="array", nullable=true)
      */
     private array $repertoire = [];
 
@@ -87,7 +85,7 @@ class Bar
 
     public function getAmountOfVisitors(): int
     {
-        if($this->amountOfVisitors === null)
+        if ($this->amountOfVisitors === null)
             return 0;
 
         return $this->amountOfVisitors;
@@ -144,9 +142,9 @@ class Bar
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getRepertoire(): array
+    public function getRepertoire(): ?array
     {
         return $this->repertoire;
     }
@@ -174,7 +172,7 @@ class Bar
         $this->visitors[$visitor->getId()] = $visitor;
     }
 
-    public function oneLessVisitor(int $visitorId):void
+    public function oneLessVisitor(int $visitorId): void
     {
         unset($this->visitors[$visitorId]);
 
@@ -188,7 +186,7 @@ class Bar
         $this->setAmountOfVisitors($visitorsCounter);
     }
 
-    public function askVisitorsToLeave():void
+    public function askVisitorsToLeave(): void
     {
         unset($this->visitors);
         $this->visitors = array();

@@ -420,7 +420,7 @@ class BarRepository extends ServiceEntityRepository
                                 $visitor->setStatus(VisitorStatusEnum::DANCING);
                                 $visitorRepository->updateVisitorInDB($visitor);
                                 echo "Visitor with id `$id` get out of line to order something and going to dance. \n";
-                            }else{
+                            } else {
                                 echo "Visitor with id `$id` continues to be in line to order drink or music. \n";
                             }
                             break;
@@ -565,7 +565,6 @@ class BarRepository extends ServiceEntityRepository
         $this->_em->remove($bar);
         $this->_em->flush();
     }
-
 
 
 }

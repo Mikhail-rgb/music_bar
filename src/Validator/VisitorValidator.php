@@ -13,21 +13,33 @@ class VisitorValidator
 
     public function checkBeforeCreation(array $inputProperties)
     {
-        $allVisitorsProperties = ["name", "surname", "money", "status", "genre"];
-        $necessaryVisitorProperties = ["money", "genre"];
-
-        if (!in_array($inputProperties, $allVisitorsProperties)) {
+        if (!isset($inputProperties['visitors'])) {
             throw new RuntimeException(
-                'Unknown properties. Expected properties are: `name`, `surname`, `money`, `status`, `genre`',
-                ErrorCodeEnum::UNKNOWN_PROPERTY
+                'Incorrect format of request. Should be array `visitors`',
+                ErrorCodeEnum::INCORRECT_REQUEST
             );
         }
 
-        if (!in_array($inputProperties, $necessaryVisitorProperties)) {
-            throw new RuntimeException(
-                'Not enough properties. Expected properties: `money`, `genre`',
-                ErrorCodeEnum::CREATION_FAILED
-            );
+        $propertiesForCheck = $inputProperties['visitors'];
+        $inputKeys = array_keys($propertiesForCheck);
+
+        $allVisitorsProperties = ["name", "surname", "money", "status", "genre"];
+        $necessaryVisitorProperties = ["money", "genre"];
+
+        foreach ($inputKeys as $inputKey) {
+            if (!in_array($inputKey, $allVisitorsProperties)) {
+                throw new RuntimeException(
+                    'Unknown properties. Expected properties are: `name`, `surname`, `money`, `status`, `genre`',
+                    ErrorCodeEnum::UNKNOWN_PROPERTY
+                );
+            }
+
+            if (!in_array($inputKey, $necessaryVisitorProperties)) {
+                throw new RuntimeException(
+                    'Not enough properties. Expected properties: `money`, `genre`',
+                    ErrorCodeEnum::CREATION_FAILED
+                );
+            }
         }
     }
 }
