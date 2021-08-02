@@ -4,12 +4,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Enum\ErrorCodeEnum;
-use App\Enum\VisitorStatusEnum;
 use App\Repository\BarRepository;
 use App\Repository\VisitorRepository;
-use App\Validator\BarValidator;
-use App\Validator\GeneralValidator;
-use App\Validator\VisitorValidator;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,22 +19,16 @@ class MusicBarController extends AbstractController
     private BarRepository $barRepository;
     private VisitorRepository $visitorRepository;
     private SerializerInterface $serializer;
-    private VisitorValidator $visitorValidator;
-    private BarValidator $barValidator;
 
     public function __construct(
         BarRepository $barRepository,
         VisitorRepository $visitorRepository,
-        SerializerInterface $serializer,
-        VisitorValidator $visitorValidator,
-        BarValidator $barValidator
+        SerializerInterface $serializer
     )
     {
         $this->barRepository = $barRepository;
         $this->visitorRepository = $visitorRepository;
         $this->serializer = $serializer;
-        $this->visitorValidator = $visitorValidator;
-        $this->barValidator = $barValidator;
     }
 
     /**
@@ -47,7 +37,7 @@ class MusicBarController extends AbstractController
     public function openMusicBar(Request $request): Response
     {
         $body = json_decode((string)$request->getContent(), true);
-        $this->barValidator->checkBeforeCreation($body);
+
         if ($this->barRepository->barExists($body)) {
             $existedBar = $this->barRepository->returnBarByTitle($body['title']);
             $bar = $this->barRepository->openBar($existedBar);
@@ -169,7 +159,12 @@ class MusicBarController extends AbstractController
 
         $body = json_decode((string)$request->getContent(), true);
 
-        $this->visitorValidator->checkBeforeCreation($body);
+        if (!isset($body['visitors'])) {
+            throw new RuntimeException(
+                'Incorrect format of request. Should be array `visitors`',
+                ErrorCodeEnum::INCORRECT_REQUEST
+            );
+        }
 
         $visitors = $body['visitors'];
         $visitorsId = [];
@@ -211,7 +206,7 @@ class MusicBarController extends AbstractController
 
         return new JsonResponse(
             [
-                'message' => "all visitors deleted"
+                'message' => "all visitors in database deleted"
             ]
         );
     }

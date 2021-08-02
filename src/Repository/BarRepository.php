@@ -26,34 +26,6 @@ class BarRepository extends ServiceEntityRepository
         parent::__construct($registry, Bar::class);
     }
 
-    // /**
-    //  * @return Bar[] Returns an array of Bar objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Bar
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
     public function create(array $body): Bar
     {
         $bar = new Bar();
@@ -115,11 +87,6 @@ class BarRepository extends ServiceEntityRepository
         }
 
         return $bars;
-    }
-
-    public function newVisitor(): void
-    {
-
     }
 
     public function returnBarByTitle(string $title): Bar
@@ -565,6 +532,5 @@ class BarRepository extends ServiceEntityRepository
         $this->_em->remove($bar);
         $this->_em->flush();
     }
-
 
 }
